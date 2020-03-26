@@ -1,0 +1,25 @@
+{
+  "name": "cordova-plugin-log2c-mqtt",
+  "version": "1.0.0",
+  "description": "Cordova MQTT plugin.",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/log2c/cordova-plugin-log2c-mqtt.git"
+  },
+  "keywords": [
+    "cordova",
+    "android",
+    "ios",
+    "update",
+    "app",
+    "update"
+  ],
+  "author": "log2c",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/log2c/cordova-plugin-log2c-mqtt/issues"
+  },
+  "homepage": "https://github.com/log2c/cordova-plugin-log2c-mqtt#readme"
+}
