@@ -16,10 +16,10 @@ module.exports = {
     unsubscribe: function (topicName, errorCallback) {
         this.callNative('unsubscribe', [topicName], null, errorCallback);
     },
-    disconnect(errorCallback) {
+    disconnect: function (errorCallback) {
         this.callNative('disconnect', null, null, errorCallback);
     },
-    publish(config, errorCallback) {
+    publish: function (config, errorCallback) {
         this.callNative('publish', [{
             ...{
                 topic: '',
@@ -30,10 +30,10 @@ module.exports = {
             ...config
         }], null, errorCallback);
     },
-    listen(successCallback, errorCallback) {
+    listen: function (successCallback, errorCallback) {
         this.callNative('listen', [], successCallback, errorCallback);
     },
-    isConnected(successCallback, errorCallback) {
+    isConnected: function (successCallback, errorCallback) {
         this.callNative('isConnected', [], successCallback, errorCallback);
     }
 
