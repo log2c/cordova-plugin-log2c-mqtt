@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<plugin id="cordova-plugin-log2c-mqtt" version="2.0.0"
+<plugin id="cordova-plugin-log2c-mqtt" version="2.0.1"
     xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <name>Cordova MQTT Plugin</name>
@@ -27,6 +27,7 @@
         <source-file src="src/android/MqttDelegateImp.java" target-dir="src/com/log2c/cordova/plugin/mqtt" />
         <source-file src="src/android/MessengerService.java" target-dir="src/com/log2c/cordova/plugin/mqtt" />
         <source-file src="src/android/MqttHelper.java" target-dir="src/com/log2c/cordova/plugin/mqtt" />
+        <source-file src="src/android/App.java" target-dir="src/com/log2c/cordova/plugin/mqtt" />
         <framework src="build-extras.gradle" custom="true" type="gradleReference" />
     </platform>
     <platform name="ios">
