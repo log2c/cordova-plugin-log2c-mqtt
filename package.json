@@ -1,13 +1,38 @@
 {
-  "name": "cordova-plugin-log2c-mqtt",
-  "version": "1.0.0",
-  "description": "Cordova MQTT plugin.",
-  "main": "index.js",
-  "scripts": {},
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/log2c/cordova-plugin-log2c-mqtt.git"
+  "_from": "cordova-plugin-log2c-mqtt",
+  "_id": "cordova-plugin-log2c-mqtt@1.0.0",
+  "_inBundle": false,
+  "_integrity": "sha512-XIB0T/khLPJYmFCqEXfMU3e6QZ5NFWq2C+K2QWAFf7TgO2qgttrFqyjmJSUnVm16d3pjktqNUKBJs6SdjPFwgQ==",
+  "_location": "/cordova-plugin-log2c-mqtt",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "cordova-plugin-log2c-mqtt",
+    "name": "cordova-plugin-log2c-mqtt",
+    "escapedName": "cordova-plugin-log2c-mqtt",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
   },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/cordova-plugin-log2c-mqtt/-/cordova-plugin-log2c-mqtt-1.0.0.tgz",
+  "_shasum": "0af34a00500f9df4a34e76dc3ca0812a6d72a254",
+  "_spec": "cordova-plugin-log2c-mqtt",
+  "_where": "/Users/ins2/Workspace/Cordova/mqtt-sample",
+  "author": {
+    "name": "log2c"
+  },
+  "bugs": {
+    "url": "https://github.com/log2c/cordova-plugin-log2c-mqtt/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "Cordova MQTT plugin.",
+  "homepage": "https://github.com/log2c/cordova-plugin-log2c-mqtt#readme",
   "keywords": [
     "cordova",
     "android",
@@ -16,10 +41,13 @@
     "app",
     "update"
   ],
-  "author": "log2c",
   "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/log2c/cordova-plugin-log2c-mqtt/issues"
+  "main": "index.js",
+  "name": "cordova-plugin-log2c-mqtt",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/log2c/cordova-plugin-log2c-mqtt.git"
   },
-  "homepage": "https://github.com/log2c/cordova-plugin-log2c-mqtt#readme"
+  "scripts": {},
+  "version": "2.0.0"
 }

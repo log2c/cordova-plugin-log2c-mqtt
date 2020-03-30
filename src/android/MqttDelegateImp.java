@@ -1,5 +1,9 @@
 package com.log2c.cordova.plugin.mqtt;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -23,11 +27,10 @@ import org.json.JSONObject;
 public class MqttDelegateImp implements MqttDelegate, MqttCallback, IMqttActionListener {
     private static final String TAG = MqttDelegateImp.class.getSimpleName();
     private MqttAsyncClient mMqttClient;
-    private CallbackContext mCallbackContext;
+    private Context mContext;
 
-    @Override
-    public void listen(CallbackContext callbackContext) {
-        mCallbackContext = callbackContext;
+    public MqttDelegateImp(Context context) {
+        mContext = context;
     }
 
     @Override
@@ -144,35 +147,42 @@ public class MqttDelegateImp implements MqttDelegate, MqttCallback, IMqttActionL
     }
 
     private void postSuccessEvent(String event, JsonElement data) {
-        if (mCallbackContext == null) {
-            return;
-        }
         JsonObject resultData = new JsonObject();
         resultData.addProperty("event", event);
         resultData.add("data", data);
-        try {
-            PluginResult result = new PluginResult(PluginResult.Status.OK, new JSONObject(resultData.toString()));
-            result.setKeepCallback(true);
-            mCallbackContext.sendPluginResult(result);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            PluginResult result = new PluginResult(PluginResult.Status.OK, new JSONObject(resultData.toString()));
+//            result.setKeepCallback(true);
+//            mCallbackContext.sendPluginResult(result);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+        sendByBroadcast(mContext, resultData.toString(), true);
+    }
+
+    private static void sendByBroadcast(Context context, String data, boolean success) {
+        Intent intent = new Intent(MessengerService.INTENT_FILTER_LISTEN);
+        Bundle bundle = new Bundle();
+        bundle.putString("data", data);
+        bundle.putBoolean("success", success);
+        intent.putExtras(bundle);
+        Log.d(TAG, "sendByBroadcast: " + success);
+        context.sendBroadcast(intent);
     }
 
     private void postErrorEvent(String event, String reason) {
-        if (mCallbackContext == null) {
-            return;
-        }
         JsonObject resultData = new JsonObject();
         resultData.addProperty("event", event);
         resultData.addProperty("reason", reason);
-        try {
-            PluginResult result = new PluginResult(PluginResult.Status.ERROR, new JSONObject(resultData.toString()));
-            result.setKeepCallback(true);
-            mCallbackContext.sendPluginResult(result);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            PluginResult result = new PluginResult(PluginResult.Status.ERROR, new JSONObject(resultData.toString()));
+//            result.setKeepCallback(true);
+////            mCallbackContext.sendPluginResult(result);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+
+        sendByBroadcast(mContext, resultData.toString(), false);
     }
 
     @Override

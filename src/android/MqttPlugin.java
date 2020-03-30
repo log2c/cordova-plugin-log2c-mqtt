@@ -1,49 +1,123 @@
 package com.log2c.cordova.plugin.mqtt;
 
+import android.app.Application;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
+import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.gson.Gson;
+import com.gyf.cactus.Cactus;
+import com.gyf.cactus.callback.CactusCallback;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+
 public class MqttPlugin extends CordovaPlugin {
     private static final String TAG = MqttPlugin.class.getSimpleName();
-    private Gson mGson = new Gson();
-    private MqttDelegate mMqttClient = new MqttDelegateImp();
+    private CallbackContext listenCallback;
+    private boolean isConnected = false;
 
     @Override
-    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+    protected void pluginInitialize() {
+        super.pluginInitialize();
+        cordova.getActivity().registerReceiver(messengerReceiver, new IntentFilter(MessengerService.INTENT_FILTER_LISTEN));
+    }
+
+
+    @Override
+    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
+        Log.d(TAG, "execute: " + action);
         if ("listen".equals(action)) {
-            mMqttClient.listen(callbackContext);
-        } else if ("connect".equals(action)) {
-            JSONObject config = args.getJSONObject(0);
-            Log.i(TAG, "connect: " + args.toString());
-            ConnectConfigModel connectConfig = mGson.fromJson(config.toString(), ConnectConfigModel.class);
-            mMqttClient.connect(connectConfig);
-        } else if ("subscribe".equals(action)) {
-            JSONObject config = args.getJSONObject(0);
-            String topicName = config.getString("topic");
-            int qos = config.getInt("qos");
-            mMqttClient.subscribe(topicName, qos);
-        } else if ("disconnect".equals(action)) {
-            mMqttClient.disConnect();
-        } else if ("unsubscribe".equals(action)) {
-            final String topicName = args.getString(0);
-            mMqttClient.unsubscribe(topicName);
-        } else if ("publish".equals(action)) {
-            JSONObject obj = args.getJSONObject(0);
-            final String topicName = obj.getString("topic");
-            final String payload = obj.getString("payload");
-            final int qos = obj.getInt("qos");
-            final boolean retain = obj.getBoolean("retain");
-            mMqttClient.publish(topicName, payload, qos, retain);
+            listenCallback = callbackContext;
+            return true;
         } else if ("isConnected".equals(action)) {
-            callbackContext.success(String.valueOf(mMqttClient.isConnected()));
+            PluginResult result = new PluginResult(PluginResult.Status.OK, isConnected);
+            callbackContext.sendPluginResult(result);
+            return true;
+        }
+        Message message = Message.obtain(null, MessengerService.MESSAGE_FROM_CLIENT);
+        Bundle bundle = new Bundle();
+        bundle.putString("msg", args.toString());
+        bundle.putString("action", action);
+        message.setData(bundle);
+        try {
+            MqttHelper.getInstance().getService().send(message);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            Log.e(TAG, "execute#send: ", e);
         }
         return true;
     }
+
+    /**
+     * 用于构建客户端的Messenger对象，并处理服务端的消息
+     */
+    private static class MessengerHandler extends Handler {
+        @Override
+        public void handleMessage(Message message) {
+            switch (message.what) {
+                case MessengerService.MESSAGE_FROM_SERVICE:
+                    Log.e(TAG, "receive message from service:" + message.getData().getString("msg"));
+                    break;
+                default:
+                    super.handleMessage(message);
+                    break;
+            }
+        }
+    }
+
+    /**
+     * 客户端Messenger对象
+     */
+    private Messenger mClientMessenger = new Messenger(new MessengerHandler());
+
+
+    private BroadcastReceiver messengerReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final boolean success = intent.getBooleanExtra("success", false);
+            final String json = intent.getStringExtra("data");
+            Log.d(TAG, "onReceive: " + json);
+            if (TextUtils.isEmpty(json)) {
+                return;
+            }
+            if (listenCallback == null) {
+                return;
+            }
+            try {
+                JSONObject jsonObject = new JSONObject(json);
+
+                String event = jsonObject.getString("event");
+                if ("connected".equals(event)) {
+                    isConnected = true;
+                } else if ("connectionLost".equals(event)) {
+                    isConnected = false;
+                }
+                if (success) {
+                    listenCallback.success(jsonObject);
+                } else {
+                    listenCallback.error(jsonObject);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+    };
+
 }
