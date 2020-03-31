@@ -38,6 +38,8 @@
         </config-file>
         <header-file src="src/ios/MqttPlugin.h" />
         <source-file src="src/ios/MqttPlugin.m" />
+        <header-file src="src/ios/MqttDelegate.h" />
+        <source-file src="src/ios/MqttDelegate.m" />
         <podspec>
             <config>
                 <source url="https://github.com/aliyun/aliyun-specs.git"/>
