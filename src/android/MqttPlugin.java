@@ -25,9 +25,9 @@ public class MqttPlugin extends CordovaPlugin {
     @Override
     protected void pluginInitialize() {
         super.pluginInitialize();
-        cordova.getActivity().registerReceiver(messengerReceiver,
-                new IntentFilter(MessengerService.INTENT_FILTER_LISTEN));
+        cordova.getActivity().registerReceiver(messengerReceiver, new IntentFilter(MessengerService.INTENT_FILTER_LISTEN));
     }
+
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
@@ -78,10 +78,8 @@ public class MqttPlugin extends CordovaPlugin {
                 PluginResult result;
                 if (success) {
                     result = new PluginResult(PluginResult.Status.OK, jsonObject);
-                    listenCallback.success(jsonObject);
                 } else {
                     result = new PluginResult(PluginResult.Status.ERROR, jsonObject);
-                    listenCallback.error(jsonObject);
                 }
                 result.setKeepCallback(true);
                 listenCallback.sendPluginResult(result);
