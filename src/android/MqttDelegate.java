@@ -1,9 +1,6 @@
 package com.log2c.cordova.plugin.mqtt;
 
-import org.apache.cordova.CallbackContext;
-
 public interface MqttDelegate {
-    void listen(CallbackContext callbackContext);
 
     void connect(ConnectConfigModel configModel);
 
