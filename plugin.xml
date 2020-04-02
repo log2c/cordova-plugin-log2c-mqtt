@@ -32,14 +32,6 @@
         </config-file>
         <header-file src="src/ios/MqttPlugin.h" />
         <source-file src="src/ios/MqttPlugin.m" />
-        <podspec>
-            <config>
-                <source url="https://github.com/aliyun/aliyun-specs.git"/>
-                <source url="https://github.com/CocoaPods/Specs.git"/>
-            </config>
-            <pods use-frameworks="true">
-                <pod name ="MQTTClient" />
-            </pods>
-        </podspec>
+        <framework src="src/ios/MQTTClient.framework" custom="true" />
     </platform>
 </plugin>
