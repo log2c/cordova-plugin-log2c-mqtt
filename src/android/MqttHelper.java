@@ -9,10 +9,7 @@ import android.os.IBinder;
 import android.os.Messenger;
 import android.util.Log;
 
-import com.gyf.cactus.Cactus;
-import com.gyf.cactus.callback.CactusCallback;
-
-public class MqttHelper implements CactusCallback {
+public class MqttHelper {
     private static final String TAG = MqttHelper.class.getSimpleName();
     private static MqttHelper mMqttHelper = null;
     private Messenger mService;
@@ -23,24 +20,9 @@ public class MqttHelper implements CactusCallback {
 
     public MqttHelper init(Application application) {
         mApplication = application;
-        Cactus.getInstance()
-                .isDebug(true)
-                .hideNotification(false)
-                .hideNotificationAfterO(false)
-                .addCallback(this)
-                .register(application);
-        return this;
-    }
-
-    @Override
-    public void doWork(int i) {
         Intent intent = new Intent(mApplication, MessengerService.class);
         mApplication.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    @Override
-    public void onStop() {
-        mApplication.unbindService(mConnection);
+        return this;
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {

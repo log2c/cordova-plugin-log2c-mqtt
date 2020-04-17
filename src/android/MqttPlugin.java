@@ -28,6 +28,12 @@ public class MqttPlugin extends CordovaPlugin {
         cordova.getActivity().registerReceiver(messengerReceiver, new IntentFilter(MessengerService.INTENT_FILTER_LISTEN));
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        sendMessage("disconnect", new JSONArray());
+        cordova.getActivity().unregisterReceiver(messengerReceiver);
+    }
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
@@ -40,6 +46,11 @@ public class MqttPlugin extends CordovaPlugin {
             callbackContext.sendPluginResult(result);
             return true;
         }
+        sendMessage(action, args);
+        return true;
+    }
+
+    private void sendMessage(String action, JSONArray args) {
         Message message = Message.obtain(null, MessengerService.MESSAGE_FROM_CLIENT);
         Bundle bundle = new Bundle();
         bundle.putString("msg", args.toString());
@@ -51,7 +62,6 @@ public class MqttPlugin extends CordovaPlugin {
             e.printStackTrace();
             Log.e(TAG, "execute#send: ", e);
         }
-        return true;
     }
 
     private BroadcastReceiver messengerReceiver = new BroadcastReceiver() {

@@ -3,15 +3,12 @@ package com.log2c.cordova.plugin.mqtt;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import org.apache.cordova.CallbackContext;
-import org.apache.cordova.PluginResult;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
@@ -21,8 +18,6 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class MqttDelegateImp implements MqttDelegate, MqttCallback, IMqttActionListener {
     private static final String TAG = MqttDelegateImp.class.getSimpleName();

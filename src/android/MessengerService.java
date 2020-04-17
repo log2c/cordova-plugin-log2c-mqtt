@@ -2,13 +2,10 @@ package com.log2c.cordova.plugin.mqtt;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
-import android.os.RemoteException;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -89,7 +86,6 @@ public class MessengerService extends Service {
         }
     }));
 
-    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         //将Messenger对象的Binder返回给客户端
