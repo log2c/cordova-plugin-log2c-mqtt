@@ -23,9 +23,15 @@ public class MqttDelegateImp implements MqttDelegate, MqttCallback, IMqttActionL
     private static final String TAG = MqttDelegateImp.class.getSimpleName();
     private MqttAsyncClient mMqttClient;
     private Context mContext;
+    private String mIntentFilter;
 
     public MqttDelegateImp(Context context) {
-        mContext = context;
+        this(context, MessengerService.INTENT_FILTER_LISTEN);
+    }
+
+    public MqttDelegateImp(Context context, String intentFilter) {
+        this.mContext = context;
+        this.mIntentFilter = intentFilter;
     }
 
     @Override
@@ -155,8 +161,8 @@ public class MqttDelegateImp implements MqttDelegate, MqttCallback, IMqttActionL
         sendByBroadcast(mContext, resultData.toString(), true);
     }
 
-    private static void sendByBroadcast(Context context, String data, boolean success) {
-        Intent intent = new Intent(MessengerService.INTENT_FILTER_LISTEN);
+    protected void sendByBroadcast(Context context, String data, boolean success) {
+        Intent intent = new Intent(mIntentFilter);
         Bundle bundle = new Bundle();
         bundle.putString("data", data);
         bundle.putBoolean("success", success);
