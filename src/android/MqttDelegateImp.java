@@ -21,9 +21,11 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 public class MqttDelegateImp implements MqttDelegate, MqttCallback, IMqttActionListener {
     private static final String TAG = MqttDelegateImp.class.getSimpleName();
+    private static final long RECONNECT_DELAY = 5 * 1000;
     private MqttAsyncClient mMqttClient;
     private Context mContext;
     private String mIntentFilter;
+    private ConnectConfigModel mConfigModel;
 
     public MqttDelegateImp(Context context) {
         this(context, MessengerService.INTENT_FILTER_LISTEN);
@@ -36,9 +38,14 @@ public class MqttDelegateImp implements MqttDelegate, MqttCallback, IMqttActionL
 
     @Override
     public void connect(ConnectConfigModel configModel) {
+        mConfigModel = configModel;
+        connectInternal();
+    }
+
+    private void connectInternal() {
         try {
             if (mMqttClient == null) {
-                mMqttClient = new MqttAsyncClient(configModel.getUrl() + ":" + configModel.getPort(), configModel.getClientId(), new MemoryPersistence());
+                mMqttClient = new MqttAsyncClient(mConfigModel.getUrl() + ":" + mConfigModel.getPort(), mConfigModel.getClientId(), new MemoryPersistence());
             } else {
                 if (mMqttClient.isConnected()) {
                     return;
@@ -48,14 +55,14 @@ public class MqttDelegateImp implements MqttDelegate, MqttCallback, IMqttActionL
             e.printStackTrace();
         }
         MqttConnectOptions options = new MqttConnectOptions();
-        if (!TextUtils.isEmpty(configModel.getUsername()) && !TextUtils.isEmpty(configModel.getPassword())) {
-            options.setUserName(configModel.getUsername());
-            options.setPassword(configModel.getPassword().toCharArray());
+        if (!TextUtils.isEmpty(mConfigModel.getUsername()) && !TextUtils.isEmpty(mConfigModel.getPassword())) {
+            options.setUserName(mConfigModel.getUsername());
+            options.setPassword(mConfigModel.getPassword().toCharArray());
         }
         options.setCleanSession(true);
-        options.setConnectionTimeout(configModel.getConnectionTimeout());
-        options.setKeepAliveInterval(configModel.getKeepAliveInterval());
-        options.setAutomaticReconnect(configModel.isAutomaticReconnect());//设置自动重连
+        options.setConnectionTimeout(mConfigModel.getConnectionTimeout());
+        options.setKeepAliveInterval(mConfigModel.getKeepAliveInterval());
+        options.setAutomaticReconnect(mConfigModel.isAutomaticReconnect());//设置自动重连
         try {
 //            options.setSocketFactory(SslUtil.getSocketFactory("/UserProfile/ca/ca.crt", "/UserProfile/ca/client.crt", "/UserProfile/ca/client.key", "123456"));
             mMqttClient.setCallback(this);
@@ -127,6 +134,20 @@ public class MqttDelegateImp implements MqttDelegate, MqttCallback, IMqttActionL
         Log.i(TAG, "connectionLost: ", cause);
         JsonObject data = new JsonObject();
         postSuccessEvent("connectionLost", data);
+
+        if (!mConfigModel.isAutomaticReconnect()) {
+            return;
+        }
+
+        new Thread(() -> {
+            Log.i(TAG, "connectionLost: 5s后尝试重新连接！");
+            try {
+                Thread.sleep(Math.max(RECONNECT_DELAY, mConfigModel.getReconnectDelay()));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            connectInternal();
+        }).start();
     }
 
     @Override

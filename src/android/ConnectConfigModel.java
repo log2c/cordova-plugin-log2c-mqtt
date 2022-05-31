@@ -11,6 +11,7 @@ public class ConnectConfigModel {
     private int keepAlive;
     private boolean isBinaryPayload;
     private boolean automaticReconnect;
+    private long reconnectDelay = 5 * 1000;
 
     public String getUrl() {
         return url;
@@ -99,6 +100,15 @@ public class ConnectConfigModel {
 
     public ConnectConfigModel setAutomaticReconnect(boolean automaticReconnect) {
         this.automaticReconnect = automaticReconnect;
+        return this;
+    }
+
+    public long getReconnectDelay() {
+        return reconnectDelay;
+    }
+
+    public ConnectConfigModel setReconnectDelay(long reconnectDelay) {
+        this.reconnectDelay = reconnectDelay;
         return this;
     }
 }
