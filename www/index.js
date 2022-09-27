@@ -20,15 +20,13 @@ module.exports = {
         this.callNative('disconnect', null, null, errorCallback);
     },
     publish: function (config, errorCallback) {
-        this.callNative('publish', [{
-            ...{
+        this.callNative('publish', [
+            Object.assign({}, {
                 topic: '',
                 payload: '',
                 qos: 0,
                 retain: false,
-            },
-            ...config
-        }], null, errorCallback);
+            }, config)], null, errorCallback);
     },
     listen: function (successCallback, errorCallback) {
         this.callNative('listen', [], successCallback, errorCallback);
