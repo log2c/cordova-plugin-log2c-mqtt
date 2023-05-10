@@ -53,6 +53,7 @@ public class MqttDelegateImp implements MqttDelegate, MqttCallback, IMqttActionL
             }
         } catch (MqttException e) {
             e.printStackTrace();
+            Log.d(TAG, "connectInternal: ", e);
         }
         MqttConnectOptions options = new MqttConnectOptions();
         if (!TextUtils.isEmpty(mConfigModel.getUsername()) && !TextUtils.isEmpty(mConfigModel.getPassword())) {
@@ -82,6 +83,7 @@ public class MqttDelegateImp implements MqttDelegate, MqttCallback, IMqttActionL
                 return true;
             } catch (MqttException e) {
                 e.printStackTrace();
+                Log.e(TAG, "subscribe: ", e);
                 postErrorEvent("subscribe", e.getMessage());
             }
         }
@@ -158,6 +160,7 @@ public class MqttDelegateImp implements MqttDelegate, MqttCallback, IMqttActionL
         data.addProperty("payload", message.toString());
         data.addProperty("qos", message.getQos());
         data.addProperty("id", message.getId());
+        data.addProperty("retained", message.isRetained());
         postSuccessEvent("message", data);
     }
 
@@ -217,6 +220,6 @@ public class MqttDelegateImp implements MqttDelegate, MqttCallback, IMqttActionL
     public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
 //        postSuccessEvent("connectFailure", new JsonObject());
         postErrorEvent("connectFailure", exception.getMessage());
-        Log.i(TAG, "connectFailure");
+        Log.e(TAG, "connectFailure");
     }
 }
